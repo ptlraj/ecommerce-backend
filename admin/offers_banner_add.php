@@ -161,18 +161,20 @@
 
                                         <div class="form-group hidden">
                                             <label for="AppBanner">App Banner</label>
-                                            <input type="file" class="form-control" id="AppBanner" name="AppBanner" accept="image/*" required>
+                                            <input type="file" class="form-control" id="AppBanner" name="AppBanner" accept="image/*">
                                         </div>
 
                                         <div class="form-group hidden">
                                             <label for="webBanner">Web Banner</label>
-                                            <input type="file" class="form-control" id="webBanner" name="webBanner" accept="image/*" required>
+                                            <input type="file" class="form-control" id="webBanner" name="webBanner" accept="image/*">
                                         </div>
 
                                         <div id="productGroup" class="form-group hidden">
                                             <label for="SelectProduct">Select Product</label>
-                                            <input class="form-control" type="text" name="SelectProduct" placeholder="Select Product">
+                                            <input class="form-control" type="text" id="SelectProduct" name="SelectProduct" placeholder="Search Product">
+                                            <div id="productResults"></div> <!-- Results will be displayed here -->
                                         </div>
+
                                     </div>
                                     <div class="col-md-6 ">
                                         <h3 style="padding:5px 0px;font-weight: 500;">SEO Details</h3>
@@ -243,6 +245,41 @@
     <script src="../assets/pages/scripts/components-bootstrap-select.min.js" type="text/javascript"></script>
 
     <!-- END THEME LAYOUT SCRIPTS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $("#SelectProduct").on("keyup", function() {
+                let query = $(this).val().trim();
+
+                if (query.length < 2) { // Only search if at least 2 characters are typed
+                    $("#productResults").html("");
+                    return;
+                }
+
+                $.ajax({
+                    url: "fetch_products.php",
+                    method: "POST",
+                    data: {
+                        query: query
+                    },
+                    success: function(response) {
+                        $("#productResults").html(response);
+                    },
+                    error: function() {
+                        $("#productResults").html("<p style='color:red;'>Error fetching products.</p>");
+                    }
+                });
+            });
+
+            // Event delegation for selecting a product from results
+            $(document).on("click", ".product-item", function() {
+                let selectedProduct = $(this).data("name");
+                $("#SelectProduct").val(selectedProduct);
+                $("#productResults").html(""); // Clear results after selection
+            });
+        });
+    </script>
 
     <script>
         $(document).ready(function() {
@@ -321,21 +358,26 @@
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const bannerFor = document.getElementById("bannerfor");
-            const appBanner = document.getElementById("AppBanner").closest(".form-group");
-            const webBanner = document.getElementById("webBanner").closest(".form-group");
+            const bannerYes = document.querySelector('input[name="IsInBanner"][value="Yes"]');
+            const bannerNo = document.querySelector('input[name="IsInBanner"][value="No"]');
+            const appBanner = document.getElementById("AppBanner");
+            const webBanner = document.getElementById("webBanner");
 
-            bannerFor.addEventListener("change", function() {
-                if (this.value) {
-                    appBanner.classList.remove("hidden");
-                    webBanner.classList.remove("hidden");
+            function toggleBannerRequirement() {
+                if (bannerYes.checked) {
+                    appBanner.setAttribute("required", "required");
+                    webBanner.setAttribute("required", "required");
                 } else {
-                    appBanner.classList.add("hidden");
-                    webBanner.classList.add("hidden");
+                    appBanner.removeAttribute("required");
+                    webBanner.removeAttribute("required");
                 }
-            });
+            }
+
+            bannerYes.addEventListener("change", toggleBannerRequirement);
+            bannerNo.addEventListener("change", toggleBannerRequirement);
         });
     </script>
+
 
 
 </body>
@@ -378,10 +420,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $product_id = $selectedProduct;
     }
 
+
     if (isset($query)) {
         $query->execute();
         $ids = $query->fetchAll(PDO::FETCH_COLUMN);
         $product_id = !empty($ids) ? implode(",", $ids) : null;
+    }
+    if ($product_id === null) {
+        echo "<script>alert('Product not found! Please select a valid product or Field.'); window.history.back();</script>";
+        exit();
     }
 
     // Define allowed file types
@@ -419,6 +466,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $webBannerName = isset($_FILES["webBanner"]) && !empty($_FILES["webBanner"]["name"]) ?
         uploadImage($_FILES["webBanner"], $uploadDir, $allowedExtensions) : "";
 
+
     // Prepare SQL statement
     $query = "INSERT INTO banners (
         banner_for, brand, category, subcategory, selected_product, name, 
@@ -448,7 +496,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':author', $author);
 
     if ($stmt->execute()) {
-        echo "Banner added successfully!";
+        echo "<script>alert('Offer added successfully!'); window.location.href='offers_banner_list.php';</script>";
     } else {
         echo "Error adding banner.";
     }
