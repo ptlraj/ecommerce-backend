@@ -101,8 +101,8 @@
                         <!-- BEGIN EXAMPLE TABLE PORTLET-->
                         <div class="portlet box green">
                             <div class="portlet-title">
-                                <div class="caption">BRAND LIST</div>
-                                <a class="dt-button buttons-print btn default" style="margin-left: 2%; margin-top: 0.4%;" href="./brandadd.php">ADD BRAND</a>
+                                <div class="caption">OFFERS LIST</div>
+                                <a class="dt-button buttons-print btn default" style="margin-left: 2%; margin-top: 0.4%;" href="./offers_banner_add.php">ADD OFFERS</a>
                             </div>
                             <div class="portlet-body">
                                 <table
@@ -111,10 +111,12 @@
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Image</th>
                                             <th>Name</th>
+                                            <th>Web Image</th>
+                                            <th>App Image</th>
                                             <th>Discription</th>
-                                            <th>Priority</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -132,7 +134,8 @@
                                             echo '<td>' . $std['name'] . '</td>';
                                             echo '<td>' . $std['discription'] . '</td>';
                                             echo '<td>' . $std['priority'] . '</td>';
-
+                                            echo '<td>' . $std['priority'] . '</td>';
+                                            echo '<td>' . $std['priority'] . '</td>';
                                             echo '<td style="display: flex; justify-content: center; align-items: center; gap: 15px;">
                                             <!-- Update Button -->
                                             <a style="color:black; padding: 10px;" href="./brandupdate.php?id=' . $std["id"] . '">

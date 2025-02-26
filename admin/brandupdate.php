@@ -32,7 +32,7 @@ if (isset($_POST['update'])) {
     try {
         // Check if a new image is uploaded
         if (!empty($_FILES["image"]["name"])) {
-            $target_dir = "../assets/images/";
+            $target_dir = "../pages/uploads/brand/";
             $new_image_name = basename($_FILES["image"]["name"]);
             $target_file = $target_dir . $new_image_name;
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
@@ -176,12 +176,7 @@ if (isset($_POST['update'])) {
                                             <label for="image">Upload New Image</label>
                                             <input type="file" class="form-control" id="image" name="image" accept="image/*">
                                         </div>
-                                        <div class="form-group">
-                                            <label for="image">Current Image</label><br>
-                                            <img src="../pages/uploads/brand/<?= $brand['image'] ?>" alt="Brand Image" style="width: 100px; height: auto;"><br><br>
-                                            <label for="image">Upload New Image</label>
-                                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                        </div>
+
                                     </div>
                                     <div class="col-md-6">
                                         <h3 style="padding:5px 0px;font-weight: 500;">SEO Details</h3>
@@ -211,8 +206,10 @@ if (isset($_POST['update'])) {
                                             <input class="form-control" type="text" name="author" value="<?= $brand['author'] ?>">
                                         </div>
                                     </div>
-                                    <button type="submit" name="update" class="btn blue">Update Brand</button>
-                                    <button type="button" class="btn default" onclick="window.location.href='brandlist.php';">Cancel</button>
+                                    <div class="form-actions">
+                                        <button type="submit" name="update" class="btn blue" style="margin-left: 1.5%;">Update Brand</button>
+                                        <button type="button" class="btn default" onclick="window.location.href='brandlist.php';">Cancel</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>

@@ -26,20 +26,20 @@
                 </ul>
             </li> -->
 
-            <li class="nav-item  ">
+            <!-- <li class="nav-item ">
                 <a href="" class="nav-link nav-toggle">
                     <i class="icon-diamond"></i>
                     <span class="title">Order</span>
                 </a>
-            </li>
-            <li class="nav-item ">
+            </li> -->
+            <li class="nav-item">
                 <a href="javascript:;" class="nav-link nav-toggle">
                     <i class="icon-puzzle"></i>
                     <span class="title">Master</span>
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
-                    <li class="nav-item  ">
+                    <li class="nav-item">
                         <a href="./brandlist.php" class="nav-link nav-toggle">
                             <span class="title">Brand</span>
                         </a>
@@ -107,7 +107,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item  ">
+            <!-- <li class="nav-item  ">
                 <a href="" class="nav-link nav-toggle">
                     <i class="icon-diamond"></i>
                     <span class="title">Bulk Price Change</span>
@@ -188,6 +188,12 @@
                         </a>
                     </li>
                 </ul>
+            </li> -->
+            <li class="nav-item ">
+                <a href="./offers_banner_list.php" class="nav-link nav-toggle">
+                    <i class="icon-diamond"></i>
+                    <span class="title">Offers Banner</span>
+                </a>
             </li>
         </ul>
         <!-- END SIDEBAR MENU -->

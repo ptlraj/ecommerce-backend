@@ -16,6 +16,7 @@ if (isset($_POST["category_id"])) {
     header("Content-Type: text/html");
 
     if ($subcategories) {
+        echo '<option value="">Select Sub Category</option>';
         foreach ($subcategories as $subcategory) {
             echo '<option value="' . htmlspecialchars($subcategory["id"]) . '">' . htmlspecialchars($subcategory["name"]) . '</option>';
         }
