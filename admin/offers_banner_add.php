@@ -85,7 +85,7 @@
                                                     <option value="Brand">Brand</option>
                                                     <option value="Category">Category</option>
                                                     <option value="Subcategory">Subcategory</option>
-                                                    <option value="SelectedProduct">Selected Product</option>
+                                                    <option value="Product">Selected Product</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -252,7 +252,7 @@
             $("#SelectProduct").on("keyup", function() {
                 let query = $(this).val().trim();
 
-                if (query.length < 2) { // Only search if at least 2 characters are typed
+                if (query.length < 1) { // Only search if at least 2 characters are typed
                     $("#productResults").html("");
                     return;
                 }
@@ -270,13 +270,6 @@
                         $("#productResults").html("<p style='color:red;'>Error fetching products.</p>");
                     }
                 });
-            });
-
-            // Event delegation for selecting a product from results
-            $(document).on("click", ".product-item", function() {
-                let selectedProduct = $(this).data("name");
-                $("#SelectProduct").val(selectedProduct);
-                $("#productResults").html(""); // Clear results after selection
             });
         });
     </script>
@@ -337,7 +330,7 @@
             } else if (selectedValue === "Subcategory") {
                 document.getElementById("categoryGroup").classList.remove("hidden");
                 document.getElementById("subcategoryGroup").classList.remove("hidden");
-            } else if (selectedValue === "SelectedProduct") {
+            } else if (selectedValue === "Product") {
                 document.getElementById("productGroup").classList.remove("hidden");
             }
         });
@@ -391,7 +384,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $brand = $_POST["brand"] ?? null;
     $category = $_POST["category"] ?? null;
     $subcategory = $_POST["subcategory"] ?? null;
-    $selectedProduct = $_POST["SelectProduct"] ?? null;
+    // $selectedProduct = $_POST["SelectProduct"] ?? null;
     $name = $_POST["name"];
     $description = $_POST["discription"] ?? null;
     $fromDate = $_POST["from"];
@@ -408,22 +401,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Fetch product IDs based on banner type
     if ($bannerFor == "Brand") {
-        $query = $conn->prepare("SELECT id FROM products WHERE brand = :brand");
-        $query->bindParam(':brand', $brand);
+
+        $queryid = $conn->prepare("SELECT id FROM products WHERE brand = :brand");
+        $queryid->bindParam(':brand', $brand);
     } elseif ($bannerFor == "Category") {
-        $query = $conn->prepare("SELECT id FROM products WHERE category = :category");
-        $query->bindParam(':category', $category);
+        $queryid = $conn->prepare("SELECT id FROM products WHERE category = :category");
+        $queryid->bindParam(':category', $category);
     } elseif ($bannerFor == "Subcategory") {
-        $query = $conn->prepare("SELECT id FROM products WHERE subcategory = :subcategory");
-        $query->bindParam(':subcategory', $subcategory);
-    } elseif ($bannerFor == "SelectedProduct") {
-        $product_id = $selectedProduct;
+        $queryid = $conn->prepare("SELECT id FROM products WHERE subcategory = :subcategory");
+        $queryid->bindParam(':subcategory', $subcategory);
+    } elseif ($bannerFor == "Product") {
+
+        $product_id = implode(",", $_POST["productid"]);
     }
 
 
-    if (isset($query)) {
-        $query->execute();
-        $ids = $query->fetchAll(PDO::FETCH_COLUMN);
+    if (isset($queryid)) {
+        echo "<script>alert(" . $_POST["productid"] . "); window.history.back();</script>";
+        exit();
+        $queryid->execute();
+        $ids = $queryid->fetchAll(PDO::FETCH_COLUMN);
         $product_id = !empty($ids) ? implode(",", $ids) : null;
     }
     if ($product_id === null) {
@@ -469,10 +466,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Prepare SQL statement
     $query = "INSERT INTO banners (
-        banner_for, brand, category, subcategory, selected_product, name, 
+        banner_for, brand, category, subcategory,  name, 
         description, from_date, to_date, is_in_banner, product_id, app_banner, web_banner, slug, title, keyword, author
     ) VALUES (
-        :banner_for, :brand, :category, :subcategory, :selected_product, :name, 
+        :banner_for, :brand, :category, :subcategory, :name, 
         :description, :from_date, :to_date, :is_in_banner, :product_id, :app_banner, :web_banner, :slug, :title, :keyword, :author
     )";
 
@@ -481,7 +478,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':brand', $brand);
     $stmt->bindParam(':category', $category);
     $stmt->bindParam(':subcategory', $subcategory);
-    $stmt->bindParam(':selected_product', $selectedProduct);
+
     $stmt->bindParam(':name', $name);
     $stmt->bindParam(':description', $description);
     $stmt->bindParam(':from_date', $fromDate);

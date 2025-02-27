@@ -13,7 +13,9 @@ if (isset($_POST["query"])) {
         echo '<table class="table table-bordered"><tr><th>Select</th><th>id</th><th>Product Name</th>
         </tr>';
         foreach ($products as $product) {
-            echo '<tr><td><input type="checkbox" name="productid" value="' . htmlspecialchars($product["id"]) . '"></td><td class="product-item">' . htmlspecialchars($product["id"]) . '</td><td class="product-item" data-name="' . htmlspecialchars($product["product_name"]) . '">' . htmlspecialchars($product["product_name"]) . '</td></tr>';
+            echo '<tr><td><input type="checkbox" name="productid[]" value="' . htmlspecialchars($product["id"]) . '"></td>
+            <td >' . htmlspecialchars($product["id"]) . '</td>
+            <td >' . htmlspecialchars($product["product_name"]) . '</td></tr>';
         }
         echo '</table>';
     } else {
