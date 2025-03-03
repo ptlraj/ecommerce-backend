@@ -123,19 +123,19 @@
                                     <tbody>
                                         <?php
                                         include "../pages/db.php";
-                                        $query = $pdo->prepare("SELECT * from brand");
+                                        $query = $pdo->prepare("SELECT * from banners");
                                         $query->execute();
                                         $brand = $query->fetchAll();
 
                                         foreach ($brand as $std) {
                                             echo '<tr>';
                                             echo '<td>' . $std['id'] . '</td>';
-                                            echo '<td><img src="../pages/uploads/brand/' . $std['image'] . '" width="50" height="50" alt="default"></td>';
                                             echo '<td>' . $std['name'] . '</td>';
-                                            echo '<td>' . $std['discription'] . '</td>';
-                                            echo '<td>' . $std['priority'] . '</td>';
-                                            echo '<td>' . $std['priority'] . '</td>';
-                                            echo '<td>' . $std['priority'] . '</td>';
+                                            echo '<td><img src="../pages/uploads/banners/' . $std['web_banner'] . '" width="50" height="50" alt="default"></td>';
+                                            echo '<td><img src="../pages/uploads/banners/' . $std['app_banner'] . '" width="50" height="50" alt="default"></td>';
+                                            echo '<td>' . $std['description'] . '</td>';
+                                            echo '<td>' . $std['from_date'] . '</td>';
+                                            echo '<td>' . $std['to_date'] . '</td>';
                                             echo '<td style="display: flex; justify-content: center; align-items: center; gap: 15px;">
                                             <!-- Update Button -->
                                             <a style="color:black; padding: 10px;" href="./brandupdate.php?id=' . $std["id"] . '">
@@ -143,7 +143,7 @@
                                             </a>
                                     
                                             <!-- Delete Button -->
-                                            <a style="padding: 10px;" href="./branddelete.php?id=' . $std["id"] . '" 
+                                            <a style="padding: 10px;" href="./offers_banner_delete.php?id=' . $std["id"] . '" 
                                                onclick="return confirm(\'Are you sure you want to delete this brand and all associated images?\');">
                                                 <span style="font-size: 1.5em;" class="glyphicon glyphicon-trash"></span>
                                             </a>
