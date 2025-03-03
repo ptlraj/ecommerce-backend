@@ -202,7 +202,7 @@
                                     </div>
                                     <div class="form-actions">
                                         <button style="margin-left: 1.5%;" type="submit" name="submit" class="btn btn-success">Add Customer</button>
-                                        <button class="btn btn-success"><a href="customerlist.php" style="text-decoration: none;color:white">Cancel</a></button>
+                                        <button class="btn btn-success"><a href="offers_banner_list.php" style="text-decoration: none;color:white">Cancel</a></button>
                                     </div>
                                 </form>
 

@@ -144,7 +144,7 @@
                                     
                                             <!-- Delete Button -->
                                             <a style="padding: 10px;" href="./offers_banner_delete.php?id=' . $std["id"] . '" 
-                                               onclick="return confirm(\'Are you sure you want to delete this brand and all associated images?\');">
+                                               onclick="return confirm(\'Are you sure you want to delete this banner and all associated images?\');">
                                                 <span style="font-size: 1.5em;" class="glyphicon glyphicon-trash"></span>
                                             </a>
                                           </td>';
