@@ -173,6 +173,7 @@
                                             <label for="SelectProduct">Select Product</label>
                                             <input class="form-control" type="text" id="SelectProduct" name="SelectProduct" placeholder="Search Product">
                                             <div id="productResults"></div> <!-- Results will be displayed here -->
+                                            <div id="selectResults"></div>
                                         </div>
 
                                     </div>
@@ -246,7 +247,31 @@
 
     <!-- END THEME LAYOUT SCRIPTS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let selectedValues = [];
 
+        document.addEventListener("change", function(event) {
+            if (event.target.classList.contains("product-checkbox")) {
+                let value = event.target.value;
+
+                if (event.target.checked) {
+                    selectedValues.push(value);
+                } else {
+                    selectedValues = selectedValues.filter(item => item !== value);
+                }
+
+                console.log(selectedValues); // Check the array in the console
+                document.cookie = "selectedProducts=" + JSON.stringify(selectedValues) + "; path=/; max-age=3600";
+                $.ajax({
+                    url: "offerselectproduct.php",
+                    method: "POST",
+                    success: function(response) {
+                        $("#selectResults").html(response);
+                    }
+                })
+            }
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $("#SelectProduct").on("keyup", function() {
@@ -332,6 +357,7 @@
                 document.getElementById("subcategoryGroup").classList.remove("hidden");
             } else if (selectedValue === "Product") {
                 document.getElementById("productGroup").classList.remove("hidden");
+                document.cookie = "selectedProducts=" + JSON.stringify(selectedValues) + "; path=/; max-age=0";
             }
         });
 
@@ -411,14 +437,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $queryid = $conn->prepare("SELECT id FROM products WHERE subcategory = :subcategory");
         $queryid->bindParam(':subcategory', $subcategory);
     } elseif ($bannerFor == "Product") {
-
-        $product_id = implode(",", $_POST["productid"]);
+        $product_id = json_decode($_COOKIE['selectedProducts'], true);
+        $product_id = implode(",", $product_id);
     }
 
 
     if (isset($queryid)) {
-        echo "<script>alert(" . $_POST["productid"] . "); window.history.back();</script>";
-        exit();
         $queryid->execute();
         $ids = $queryid->fetchAll(PDO::FETCH_COLUMN);
         $product_id = !empty($ids) ? implode(",", $ids) : null;
@@ -493,6 +517,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':author', $author);
 
     if ($stmt->execute()) {
+        setcookie("selectedProducts", "", time() - 3600, "/");
         echo "<script>alert('Offer added successfully!'); window.location.href='offers_banner_list.php';</script>";
     } else {
         echo "Error adding banner.";
