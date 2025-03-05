@@ -1,3 +1,6 @@
+<?php
+include "../session_expire.php";
+?>
 <div class="page-header navbar navbar-fixed-top">
     <!-- BEGIN HEADER INNER -->
     <div class="page-header-inner ">

@@ -1,6 +1,6 @@
 <?php
 include "../connection.php"; // Include database connection
-
+include "../session_expire.php";
 if (isset($_GET['id'])) {
     $product_id = $_GET['id'];
 
