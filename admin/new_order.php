@@ -156,6 +156,44 @@ License: You must have a valid license purchased only from themeforest(the above
                                                     </label>
                                                 </div>
                                             </div>
+                                            <div>
+                                                <div id="productList">
+                                                    <div class="product-entry" style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                                                        <span>1.</span>
+                                                        <select name="product[]" class="product-select" required style="padding: 5px; width: 120px;">
+                                                            <option value="">Select Product</option>
+                                                            <?php
+                                                            include("../connection.php"); // Ensure correct path
+
+                                                            try {
+                                                                $pd = $conn->prepare("SELECT id, product_name, mrp, retailer_price FROM products");
+                                                                $pd->execute();
+                                                                $products = $pd->fetchAll(PDO::FETCH_ASSOC);
+
+                                                                foreach ($products as $pro) {
+                                                                    echo '<option value="' . $pro['id'] . '" data-mrp="' . $pro['mrp'] . '" data-offer="' . $pro['retailer_price'] . '">' . htmlspecialchars($pro['product_name']) . '</option>';
+                                                                }
+                                                            } catch (PDOException $e) {
+                                                                echo '<option value="">Error loading products</option>';
+                                                            }
+                                                            ?>
+                                                        </select>
+
+                                                        <input type="text" name="mrp[]" class="mrp" placeholder="MRP" readonly style="padding: 5px; width: 80px;">
+                                                        <input type="text" name="offer_mrp[]" class="offer-mrp" placeholder="Offer MRP" readonly style="padding: 5px; width: 100px;">
+                                                        <input type="number" name="qty[]" class="qty" placeholder="Qty" required style="padding: 5px; width: 60px;">
+                                                        <input type="text" name="total_price[]" class="total-price" placeholder="Total" readonly style="padding: 5px; width: 100px;">
+                                                        <button type="button" class="add-row" style="padding: 5px 10px; background-color: green; color: white;">+</button>
+                                                        <button type="button" class="remove-row" style="padding: 5px 10px; background-color: red; color: white;">-</button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Grand Total -->
+                                                <div style="font-weight: bold; margin-top: 10px;">
+                                                    Grand Total: <input type="text" id="grandTotal" readonly style="padding: 5px; width: 120px;">
+                                                </div>
+
+                                            </div>
                                         </div>
                                         <div class="form-actions">
                                             <button type="submit" name="submit" class="btn blue">Add Brand</button>
@@ -236,6 +274,82 @@ License: You must have a valid license purchased only from themeforest(the above
                 $("#customer_city").val(city);
                 $("#customer_address").val(address);
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Update MRP, Offer MRP, and Total when selecting a product
+            $(document).on("change", ".product-select", function() {
+                var selected = $(this).find(":selected");
+                var row = $(this).closest(".product-entry");
+
+                row.find(".mrp").val(selected.data("mrp") || "");
+                row.find(".offer-mrp").val(selected.data("offer") || "");
+                row.find(".qty").val(1).trigger("input"); // Default qty to 1
+            });
+
+            // Update total price when changing quantity
+            $(document).on("input", ".qty", function() {
+                var row = $(this).closest(".product-entry");
+                var offerPrice = parseFloat(row.find(".offer-mrp").val()) || 0;
+                var qty = parseInt($(this).val()) || 0;
+
+                // Ensure quantity is always ≥ 0
+                if (qty < 0) {
+                    $(this).val(0);
+                    qty = 0;
+                }
+
+                var total = offerPrice * qty;
+                row.find(".total-price").val(total.toFixed(2));
+
+                updateGrandTotal(); // Update total after every qty change
+            });
+
+            // Add new row
+            $(document).on("click", ".add-row", function() {
+                var newRow = $(".product-entry:first").clone();
+                newRow.find("input").val("");
+                newRow.find("select").val("");
+                newRow.find(".qty").val(1); // Set default qty to 1
+                newRow.find("span").text($("#productList .product-entry").length + 1);
+
+                // Ensure each new row has both Add and Remove buttons
+                newRow.find(".add-row").remove();
+                newRow.find(".remove-row").remove();
+                newRow.append('<button type="button" class="add-row" style="padding: 5px 10px; background-color: green; color: white;">+</button>');
+                newRow.append('<button type="button" class="remove-row" style="padding: 5px 10px; background-color: red; color: white;">-</button>');
+
+                $("#productList").append(newRow);
+                updateRowNumbers();
+            });
+
+            // Remove row
+            $(document).on("click", ".remove-row", function() {
+                if ($("#productList .product-entry").length > 1) {
+                    $(this).closest(".product-entry").remove();
+                    updateRowNumbers();
+                    updateGrandTotal();
+                } else {
+                    alert("At least one product is required.");
+                }
+            });
+
+            // Update Grand Total
+            function updateGrandTotal() {
+                var grandTotal = 0;
+                $(".total-price").each(function() {
+                    grandTotal += parseFloat($(this).val()) || 0;
+                });
+                $("#grandTotal").val(grandTotal.toFixed(2));
+            }
+
+            // Update row numbers dynamically
+            function updateRowNumbers() {
+                $("#productList .product-entry").each(function(index) {
+                    $(this).find("span").text(index + 1);
+                });
+            }
         });
     </script>
 
