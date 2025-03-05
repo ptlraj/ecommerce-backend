@@ -138,7 +138,7 @@
                                             echo '<td>' . $std['to_date'] . '</td>';
                                             echo '<td style="display: flex; justify-content: center; align-items: center; gap: 15px;">
                                             <!-- Update Button -->
-                                            <a style="color:black; padding: 10px;" href="./brandupdate.php?id=' . $std["id"] . '">
+                                            <a style="color:black; padding: 10px;" href="./offers_banner_update.php?id=' . $std["id"] . '">
                                                 <span style="font-size: 1.5em;" class="glyphicon glyphicon-pencil"></span> 
                                             </a>
                                     
