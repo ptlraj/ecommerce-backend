@@ -201,7 +201,7 @@
                                         </div>
                                     </div>
                                     <div class="form-actions">
-                                        <button style="margin-left: 1.5%;" type="submit" name="submit" class="btn btn-success">Add Customer</button>
+                                        <button style="margin-left: 1.5%;" type="submit" name="submit" class="btn btn-success">Add Offer</button>
                                         <button class="btn btn-success"><a href="offers_banner_list.php" style="text-decoration: none;color:white">Cancel</a></button>
                                     </div>
                                 </form>
@@ -298,7 +298,7 @@
             });
         });
     </script>
-
+    <!-- sub category  -->
     <script>
         $(document).ready(function() {
             $("#category").on("change", function() {
@@ -326,6 +326,7 @@
             });
         });
     </script>
+    <!-- slug  -->
     <script>
         $(document).ready(function() {
             $("input[name='name']").on("input", function() {
@@ -357,6 +358,7 @@
                 document.getElementById("subcategoryGroup").classList.remove("hidden");
             } else if (selectedValue === "Product") {
                 document.getElementById("productGroup").classList.remove("hidden");
+                document.cookie = "product_ids=" + JSON.stringify(selectedValues) + "; path=/; max-age=0";
                 document.cookie = "selectedProducts=" + JSON.stringify(selectedValues) + "; path=/; max-age=0";
             }
         });

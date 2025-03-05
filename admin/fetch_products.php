@@ -9,6 +9,34 @@ if (isset($_POST["query"])) {
     } else {
         $cookieproduct = [];
     }
+    if (isset($_COOKIE["product_ids"])) {
+        $cookieupdate = $_COOKIE["product_ids"];
+        $cookieupdate = json_decode($_COOKIE['product_ids'], true);
+    } else {
+        $cookieupdate = [];
+    }
+    if (isset($_COOKIE["unchecked"])) {
+        $unchecked = $_COOKIE["unchecked"];
+        $unchecked = json_decode($_COOKIE['unchecked'], true);
+    } else {
+        $unchecked = [];
+    }
+
+    // Remove elements present in $removedata from $arrayData
+    $resultArray = array_diff($cookieupdate, $unchecked);
+
+    // Re-index the array (optional)
+    $resultArray = array_values($resultArray);
+
+    $resultArray = array_merge($resultArray, $cookieproduct);
+
+    // Remove duplicates
+    $resultArray = array_unique($resultArray);
+
+    // Reset array indexes after removing duplicates
+    $resultArray = array_values($resultArray);
+
+
     $query = $conn->prepare("SELECT id, product_name FROM products WHERE product_name LIKE :search LIMIT 10");
     $query->bindParam(":search", $search, PDO::PARAM_STR);
     $query->execute();
@@ -19,7 +47,7 @@ if (isset($_POST["query"])) {
         </tr>';
         foreach ($products as $product) {
             echo '<tr><td><input type="checkbox" name="productid[]" class="product-checkbox" value="' . htmlspecialchars($product["id"]) . '"';
-            if (in_array($product["id"], $cookieproduct)) {
+            if (in_array($product["id"], $resultArray)) {
                 echo "checked";
             }
             echo '></td>
